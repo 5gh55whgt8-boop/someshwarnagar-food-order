@@ -1,4 +1,7 @@
-const API_BASE = "http://localhost:5000";
+const API_BASE =
+  window.location.hostname === "localhost"
+    ? "http://localhost:5000"
+    : "https://YOUR-RENDER-BACKEND.onrender.com";
 
 const categoriesBox = document.getElementById("categories");
 const menuContainer = document.getElementById("menuContainer");
