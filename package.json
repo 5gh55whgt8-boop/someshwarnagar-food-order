@@ -1,0 +1,31 @@
+{
+  "name": "someshwarnagar-food-order",
+  "version": "1.0.0",
+  "description": "Professional local food ordering website for Someshwarnagar",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "food-ordering",
+    "nodejs",
+    "express",
+    "mysql",
+    "pwa"
+  ],
+  "author": "Vivek Vijay Jagtap",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.22.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

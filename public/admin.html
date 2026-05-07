@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Kanban Panel</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="kanban-body">
+
+<header class="kanban-header">
+  <div>
+    <h1>🍴 Live Orders Control Center</h1>
+    <p>Manage all restaurant orders in real time</p>
+  </div>
+
+  <div class="kanban-actions">
+    <span id="newOrderBadge" class="new-order-badge">0 New</span>
+    <button onclick="loadAdminKanban()">🔄 Refresh</button>
+    <button onclick="window.location.href='menu.html'">Customer View</button>
+  </div>
+</header>
+
+<section class="kanban-stats">
+  <div class="k-stat">
+    <h3 id="kTotal">0</h3>
+    <p>Total</p>
+  </div>
+
+  <div class="k-stat yellow">
+    <h3 id="kPending">0</h3>
+    <p>Pending</p>
+  </div>
+
+  <div class="k-stat blue">
+    <h3 id="kPreparing">0</h3>
+    <p>Preparing</p>
+  </div>
+
+  <div class="k-stat green">
+    <h3 id="kDelivered">0</h3>
+    <p>Delivered</p>
+  </div>
+</section>
+
+<main class="kanban-board">
+
+  <section>
+    <h2>🟡 Pending</h2>
+    <div id="pendingCol" class="kanban-col"></div>
+  </section>
+
+  <section>
+    <h2>🔵 Preparing</h2>
+    <div id="preparingCol" class="kanban-col"></div>
+  </section>
+
+  <section>
+    <h2>🟣 Delivery</h2>
+    <div id="deliveryCol" class="kanban-col"></div>
+  </section>
+
+  <section>
+    <h2>🟢 Delivered</h2>
+    <div id="deliveredCol" class="kanban-col"></div>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

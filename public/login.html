@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Someshwarnagar Food | Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="ultra-auth-body">
+
+<div class="ultra-auth-bg">
+  <span>🍕</span>
+  <span>🍔</span>
+  <span>🥘</span>
+  <span>🥤</span>
+</div>
+
+<main class="ultra-auth-shell">
+
+  <section class="ultra-brand">
+    <div class="brand-pill">🚀 LOCAL FOOD DELIVERY</div>
+    <h1>Order local food faster than ever.</h1>
+    <p>Someshwarnagar Food brings snacks, meals, drinks and 24-hour future booking from nearby cafes to your doorstep.</p>
+
+    <div class="ultra-stats">
+      <div><b>4.9★</b><span>Rating</span></div>
+      <div><b>20 min</b><span>Avg Delivery</span></div>
+      <div><b>24h</b><span>Booking</span></div>
+    </div>
+  </section>
+
+  <section class="ultra-card">
+    <div class="ultra-logo-row">
+      <div class="ultra-logo">🍽️</div>
+      <div>
+        <h2>Welcome back</h2>
+        <p>Login or create your account</p>
+      </div>
+    </div>
+
+   <button class="google-btn" type="button" onclick="googleLoginDemo()">
+      <span>G</span> Continue with Google
+    </button>
+
+    <div class="or-line"><span>or continue with email</span></div>
+
+    <div class="auth-tabs premium-tabs">
+      <button id="loginTab" class="active" onclick="showLogin()">Login</button>
+      <button id="registerTab" onclick="showRegister()">Register</button>
+    </div>
+
+    <div id="loginForm" class="ultra-form">
+      <label>Email Address</label>
+      <div class="input-icon">
+        <span>✉️</span>
+        <input type="email" id="loginEmail" placeholder="you@example.com">
+      </div>
+
+      <label>Password</label>
+      <div class="input-icon">
+        <span>🔒</span>
+        <input type="password" id="loginPassword" placeholder="Enter password">
+        <button type="button" class="eye-btn" onclick="togglePassword('loginPassword')">👁</button>
+      </div>
+
+      <button class="auth-btn ultra-main-btn" onclick="customerLogin()">Login & Order</button>
+
+      <p class="auth-link" onclick="showForgotPassword()">Forgot Password?</p>
+    </div>
+
+    <div id="registerForm" class="ultra-form" style="display:none;">
+      <label>Full Name</label>
+      <div class="input-icon">
+        <span>👤</span>
+        <input type="text" id="registerName" placeholder="Enter full name">
+      </div>
+
+      <label>Email Address</label>
+      <div class="input-icon">
+        <span>✉️</span>
+        <input type="email" id="registerEmail" placeholder="Enter email">
+      </div>
+
+      <label>Phone Number</label>
+      <div class="input-icon">
+        <span>📞</span>
+        <input type="text" id="registerPhone" placeholder="10 digit mobile number">
+      </div>
+
+      <label>Password</label>
+      <div class="input-icon">
+        <span>🔒</span>
+        <input type="password" id="registerPassword" placeholder="Create password">
+        <button type="button" class="eye-btn" onclick="togglePassword('registerPassword')">👁</button>
+      </div>
+
+      <label>Address</label>
+      <textarea id="registerAddress" placeholder="Enter delivery address"></textarea>
+
+      <button class="auth-btn ultra-main-btn" onclick="customerRegister()">Create Account</button>
+    </div>
+
+    <div id="forgotForm" class="ultra-form" style="display:none;">
+      <h2>Reset Password</h2>
+      <p class="auth-subtitle">OTP will be shown in terminal for local testing.</p>
+
+      <label>Email Address</label>
+      <div class="input-icon">
+        <span>✉️</span>
+        <input type="email" id="forgotEmail" placeholder="Enter registered email">
+      </div>
+
+      <button class="auth-btn ultra-main-btn" onclick="sendForgotOtp()">Send OTP</button>
+
+      <label>OTP</label>
+      <div class="input-icon">
+        <span>🔢</span>
+        <input type="text" id="resetOtp" placeholder="Enter OTP">
+      </div>
+
+      <label>New Password</label>
+      <div class="input-icon">
+        <span>🔒</span>
+        <input type="password" id="newPassword" placeholder="Enter new password">
+        <button type="button" class="eye-btn" onclick="togglePassword('newPassword')">👁</button>
+      </div>
+
+      <button class="auth-btn secondary" onclick="resetCustomerPassword()">Reset Password</button>
+
+      <p class="auth-link" onclick="showLogin()">Back to Login</p>
+    </div>
+
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

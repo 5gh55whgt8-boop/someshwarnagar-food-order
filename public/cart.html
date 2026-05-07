@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Cart | Someshwarnagar Food</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="premium-cart-body">
+
+<header class="cart-header">
+  <a href="menu.html" class="back-arrow">←</a>
+  <div>
+    <h2>Your Cart</h2>
+    <p>Review items & checkout</p>
+  </div>
+</header>
+
+<main class="premium-cart-layout">
+
+  <section class="cart-left-panel">
+
+    <div class="address-card">
+      <div>
+        <span class="mini-label">Delivering to</span>
+        <h3 id="cartAddressTitle">Saved Address</h3>
+        <p id="cartAddressText">Add your delivery address</p>
+      </div>
+      <button onclick="useCurrentLocation()">📍 Use Location</button>
+    </div>
+
+    <div class="cart-section-card">
+      <div class="section-head">
+        <div>
+          <h3>Your Order</h3>
+          <p id="cartItemCountText">0 items selected</p>
+        </div>
+        <a href="menu.html">+ Add More</a>
+      </div>
+
+      <div id="cartItems"></div>
+    </div>
+
+    <div class="cart-section-card">
+      <div class="section-head">
+        <div>
+          <h3>Complete Your Meal</h3>
+          <p>Add snacks or drinks with your order</p>
+        </div>
+      </div>
+
+      <div class="suggestion-list premium-suggestion-list">
+        <div class="suggestion-item">
+          <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=500&q=80" alt="Cold Coffee">
+          <span>Cold Coffee</span>
+          <b>₹90</b>
+          <button onclick="addSuggestedItem('Cold Coffee', 90, 'Cold Drinks')">Add</button>
+        </div>
+
+        <div class="suggestion-item">
+          <img src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=500&q=80" alt="French Fries">
+          <span>French Fries</span>
+          <b>₹80</b>
+          <button onclick="addSuggestedItem('French Fries', 80, 'Snacks')">Add</button>
+        </div>
+
+        <div class="suggestion-item">
+          <img src="https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=500&q=80" alt="Cheese Sandwich">
+          <span>Cheese Sandwich</span>
+          <b>₹90</b>
+          <button onclick="addSuggestedItem('Cheese Sandwich', 90, 'Snacks')">Add</button>
+        </div>
+
+        <div class="suggestion-item">
+          <img src="https://images.unsplash.com/photo-1621263764928-df1444c5e859?auto=format&fit=crop&w=500&q=80" alt="Lemon Soda">
+          <span>Lemon Soda</span>
+          <b>₹40</b>
+          <button onclick="addSuggestedItem('Lemon Soda', 40, 'Cold Drinks')">Add</button>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <aside class="cart-right-panel">
+
+    <div class="cart-section-card checkout-card">
+      <h3>Delivery Details</h3>
+
+      <label>Customer Name</label>
+      <input type="text" id="customerName" placeholder="Enter your name">
+
+      <label>Phone Number</label>
+      <input type="text" id="customerPhone" placeholder="Enter phone number">
+
+      <label>Delivery Address</label>
+      <textarea id="customerAddress" placeholder="Enter delivery address"></textarea>
+
+      <button class="location-btn" onclick="useCurrentLocation()">📍 Use Current Location</button>
+      <p id="locationStatus" class="location-status"></p>
+
+      <label>Order Type</label>
+      <select id="orderType">
+        <option value="NOW">Order Now</option>
+        <option value="FUTURE">Future Booking</option>
+      </select>
+
+      <div id="futureDateBox" style="display:none;">
+        <label>Delivery Date & Time</label>
+        <input type="datetime-local" id="deliveryDate">
+        <small>Future booking must be minimum 24 hours later.</small>
+      </div>
+    </div>
+
+    <div class="cart-section-card coupon-premium-card">
+      <div class="coupon-top">
+        <div>
+          <span>🎓 STUDENT50</span>
+          <h3>Save ₹50 on this order</h3>
+        </div>
+        <b>₹50 OFF</b>
+      </div>
+
+      <div class="coupon-box">
+        <input type="text" id="couponInput" placeholder="Enter coupon code">
+        <button onclick="applyCoupon()">Apply</button>
+      </div>
+
+      <p id="couponMessage" class="coupon-message"></p>
+    </div>
+
+    <div class="cart-section-card request-card">
+      <h3>Cooking Request</h3>
+      <p id="savedCookingRequest">No special request added</p>
+      <button class="outline-btn full-width" onclick="openCookingRequest()">✍ Add Request</button>
+    </div>
+
+    <div class="cart-section-card bill-card">
+      <h3>Bill Summary</h3>
+
+      <div class="bill-row">
+        <span>Item Total</span>
+        <strong id="itemTotal">₹0</strong>
+      </div>
+
+      <div class="bill-row">
+        <span>Delivery Fee</span>
+        <strong id="deliveryCharge">₹0</strong>
+      </div>
+
+      <div class="bill-row">
+        <span>GST & Other Charges</span>
+        <strong id="gstCharge">₹0</strong>
+      </div>
+
+      <div class="bill-row discount-row">
+        <span>Coupon Discount</span>
+        <strong id="discountAmount">-₹0</strong>
+      </div>
+
+      <div class="bill-row grand">
+        <span>To Pay</span>
+        <strong id="cartTotal">₹0</strong>
+      </div>
+
+      <p class="policy-text">
+        Delivery fee is ₹50 per item, capped at 3 items. Please verify address before placing order.
+      </p>
+    </div>
+
+  </aside>
+
+</main>
+
+<div class="premium-bottom-pay">
+  <div>
+    <span>Total Payable</span>
+    <strong id="bottomTotal">₹0</strong>
+  </div>
+  <button onclick="placeOrder()">Proceed to Pay</button>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
