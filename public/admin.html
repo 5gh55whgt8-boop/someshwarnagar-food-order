@@ -8,7 +8,6 @@
 </head>
 
 <body class="kanban-body">
-
 <header class="kanban-header">
   <div>
     <h1>🍴 Live Orders Control Center</h1>
@@ -70,4 +69,11 @@
 
 <script src="app.js"></script>
 </body>
+<script>
+  const isAdminLoggedIn = localStorage.getItem("adminLoggedIn");
+
+  if (isAdminLoggedIn !== "true") {
+    window.location.href = "/admin-login.html";
+  }
+</script>
 </html>
