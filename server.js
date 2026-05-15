@@ -282,6 +282,26 @@ app.post("/api/reset-password", async (req, res) => {
   }
 });
 
+/* GET ALL CATEGORIES */
+app.get("/api/categories", (req, res) => {
+  db.query(
+    "SELECT * FROM categories WHERE is_active = 1 ORDER BY id ASC",
+    (err, rows) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          error: err.message
+        });
+      }
+
+      res.json({
+        success: true,
+        categories: rows
+      });
+    }
+  );
+});
+
 /* GET ALL MENU ITEMS */
 app.get("/api/menu", (req, res) => {
   db.query(
