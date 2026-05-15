@@ -5,8 +5,16 @@ const bcrypt = require("bcryptjs");
 const db = require("./db");
 const otpStore = {};
 const path = require("path");
+const nodemailer = require("nodemailer");
 
 dotenv.config();
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -159,7 +167,7 @@ app.post("/api/forgot-password", (req, res) => {
   db.query(
     "SELECT id FROM users WHERE email = ?",
     [email],
-    (err, rows) => {
+    async (err, rows) => {
       if (err) {
         return res.status(500).json({
           success: false,
@@ -176,14 +184,38 @@ app.post("/api/forgot-password", (req, res) => {
 
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-      otpStore[email] = otp;
+      otpStore[email] = {
+        otp,
+        expiresAt: Date.now() + 10 * 60 * 1000
+      };
 
-      console.log(`🔐 OTP for ${email}: ${otp}`);
+      try {
+        await transporter.sendMail({
+          from: `"Someshwarnagar Food" <${process.env.EMAIL_USER}>`,
+          to: email,
+          subject: "Password Reset OTP",
+          html: `
+            <div style="font-family: Arial; padding:20px;">
+              <h2>Someshwarnagar Food Order</h2>
+              <p>Your OTP for password reset is:</p>
+              <h1 style="color:#ff6b00;">${otp}</h1>
+              <p>This OTP is valid for 10 minutes.</p>
+            </div>
+          `
+        });
 
-      res.json({
-        success: true,
-        message: "OTP sent successfully ✅ (Check terminal)"
-      });
+        res.json({
+          success: true,
+          message: "OTP sent to your email ✅"
+        });
+
+      } catch (mailError) {
+        res.status(500).json({
+          success: false,
+          message: "Failed to send OTP email",
+          error: mailError.message
+        });
+      }
     }
   );
 });
@@ -199,7 +231,22 @@ app.post("/api/reset-password", async (req, res) => {
       });
     }
 
-    if (!otpStore[email] || otpStore[email] !== otp) {
+    if (!otpStore[email]) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP not found. Please request a new OTP."
+      });
+    }
+
+    if (Date.now() > otpStore[email].expiresAt) {
+      delete otpStore[email];
+      return res.status(400).json({
+        success: false,
+        message: "OTP expired. Please request a new OTP."
+      });
+    }
+
+    if (otpStore[email].otp !== otp) {
       return res.status(400).json({
         success: false,
         message: "Invalid OTP"
@@ -233,22 +280,6 @@ app.post("/api/reset-password", async (req, res) => {
       error: error.message
     });
   }
-});
-/* GET ALL CATEGORIES */
-app.get("/api/categories", (req, res) => {
-  db.query(
-    "SELECT * FROM categories WHERE is_active = 1 ORDER BY id ASC",
-    (err, rows) => {
-      if (err) {
-        return res.status(500).json({ success: false, error: err.message });
-      }
-
-      res.json({
-        success: true,
-        categories: rows
-      });
-    }
-  );
 });
 
 /* GET ALL MENU ITEMS */
