@@ -5,7 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Someshwarnagar Food | Login</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="/manifest.webmanifest">
 </head>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js");
+  }
+</script>
 <body class="ultra-auth-body">
 
 <div class="ultra-auth-bg">

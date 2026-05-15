@@ -1042,7 +1042,7 @@ async function sendForgotOtp() {
       return;
     }
 
-    showToast("OTP sent ✅ Check terminal");
+    showToast("OTP sent to your email ✅ Check inbox/spam");
   } catch {
     showToast("Server error. Try again.");
   }
