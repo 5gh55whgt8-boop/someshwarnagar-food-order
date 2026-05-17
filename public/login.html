@@ -7,11 +7,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="manifest" href="/manifest.webmanifest">
 </head>
-<script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.js");
-  }
-</script>
+
 <body class="ultra-auth-body">
 
 <div class="ultra-auth-bg">
@@ -44,7 +40,7 @@
       </div>
     </div>
 
-   <button class="google-btn" type="button" onclick="googleLoginDemo()">
+    <button class="google-btn" type="button" onclick="googleLoginDemo()">
       <span>G</span> Continue with Google
     </button>
 
@@ -108,7 +104,7 @@
 
     <div id="forgotForm" class="ultra-form" style="display:none;">
       <h2>Reset Password</h2>
-      <p class="auth-subtitle">OTP will be shown in terminal for local testing.</p>
+      <p class="auth-subtitle">OTP will be sent to your registered email. Please check inbox/spam.</p>
 
       <label>Email Address</label>
       <div class="input-icon">
@@ -141,5 +137,10 @@
 </main>
 
 <script src="app.js"></script>
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  }
+</script>
 </body>
 </html>

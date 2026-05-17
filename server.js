@@ -3,27 +3,30 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs");
 const db = require("./db");
-const otpStore = {};
 const path = require("path");
 const nodemailer = require("nodemailer");
 
 dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+const otpStore = {};
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    pass: (process.env.EMAIL_PASS || "").replace(/\s/g, "")
   }
 });
 
-const app = express();
-const PORT = process.env.PORT || 5000;
-
 app.use(cors());
 app.use(express.json());
+
 app.get("/", (req, res) => {
   res.redirect("/login.html");
 });
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.get("/test-db", (req, res) => {
@@ -153,7 +156,8 @@ app.post("/api/login", (req, res) => {
     });
   }
 });
-/* FORGOT PASSWORD - SEND OTP */
+
+/* FORGOT PASSWORD - SEND OTP EMAIL */
 app.post("/api/forgot-password", (req, res) => {
   const { email } = req.body;
 
@@ -164,61 +168,58 @@ app.post("/api/forgot-password", (req, res) => {
     });
   }
 
-  db.query(
-    "SELECT id FROM users WHERE email = ?",
-    [email],
-    async (err, rows) => {
-      if (err) {
-        return res.status(500).json({
-          success: false,
-          error: err.message
-        });
-      }
-
-      if (rows.length === 0) {
-        return res.status(400).json({
-          success: false,
-          message: "Email not registered"
-        });
-      }
-
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
-
-      otpStore[email] = {
-        otp,
-        expiresAt: Date.now() + 10 * 60 * 1000
-      };
-
-      try {
-        await transporter.sendMail({
-          from: `"Someshwarnagar Food" <${process.env.EMAIL_USER}>`,
-          to: email,
-          subject: "Password Reset OTP",
-          html: `
-            <div style="font-family: Arial; padding:20px;">
-              <h2>Someshwarnagar Food Order</h2>
-              <p>Your OTP for password reset is:</p>
-              <h1 style="color:#ff6b00;">${otp}</h1>
-              <p>This OTP is valid for 10 minutes.</p>
-            </div>
-          `
-        });
-
-        res.json({
-          success: true,
-          message: "OTP sent to your email ✅"
-        });
-
-      } catch (mailError) {
-        res.status(500).json({
-          success: false,
-          message: "Failed to send OTP email",
-          error: mailError.message
-        });
-      }
+  db.query("SELECT id FROM users WHERE email = ?", [email], async (err, rows) => {
+    if (err) {
+      return res.status(500).json({
+        success: false,
+        error: err.message
+      });
     }
-  );
+
+    if (rows.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Email not registered"
+      });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    otpStore[email] = {
+      otp,
+      expiresAt: Date.now() + 10 * 60 * 1000
+    };
+
+    try {
+      await transporter.sendMail({
+        from: `"Someshwarnagar Food" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Password Reset OTP - Someshwarnagar Food",
+        html: `
+          <div style="font-family: Arial, sans-serif; padding: 20px; line-height: 1.6;">
+            <h2 style="color:#16a34a;">Someshwarnagar Food Order</h2>
+            <p>Your OTP for password reset is:</p>
+            <h1 style="color:#ff6b00; letter-spacing: 4px;">${otp}</h1>
+            <p>This OTP is valid for <b>10 minutes</b>.</p>
+            <p>If you did not request this password reset, please ignore this email.</p>
+          </div>
+        `
+      });
+
+      res.json({
+        success: true,
+        message: "OTP sent to your email ✅"
+      });
+    } catch (mailError) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to send OTP email",
+        error: mailError.message
+      });
+    }
+  });
 });
+
 /* RESET PASSWORD */
 app.post("/api/reset-password", async (req, res) => {
   try {
@@ -314,7 +315,10 @@ app.get("/api/menu", (req, res) => {
      ORDER BY m.category_id ASC, m.id ASC`,
     (err, rows) => {
       if (err) {
-        return res.status(500).json({ success: false, error: err.message });
+        return res.status(500).json({
+          success: false,
+          error: err.message
+        });
       }
 
       res.json({
@@ -340,7 +344,10 @@ app.get("/api/menu/:categoryId", (req, res) => {
     [categoryId],
     (err, rows) => {
       if (err) {
-        return res.status(500).json({ success: false, error: err.message });
+        return res.status(500).json({
+          success: false,
+          error: err.message
+        });
       }
 
       res.json({
@@ -350,6 +357,7 @@ app.get("/api/menu/:categoryId", (req, res) => {
     }
   );
 });
+
 /* PLACE ORDER */
 app.post("/api/place-order", (req, res) => {
   try {
@@ -417,13 +425,13 @@ app.post("/api/place-order", (req, res) => {
 
         const orderId = orderResult.insertId;
 
-       const orderItemsData = items.map((item) => [
-  orderId,
-  Number.isInteger(Number(item.id)) ? Number(item.id) : null,
-  item.name,
-  item.quantity,
-  item.price
-]);
+        const orderItemsData = items.map((item) => [
+          orderId,
+          Number.isInteger(Number(item.id)) ? Number(item.id) : null,
+          item.name,
+          item.quantity,
+          item.price
+        ]);
 
         const itemsSql = `
           INSERT INTO order_items
@@ -454,6 +462,7 @@ app.post("/api/place-order", (req, res) => {
     });
   }
 });
+
 /* GET USER ORDERS */
 app.get("/api/orders/:userId", (req, res) => {
   const { userId } = req.params;
@@ -519,6 +528,7 @@ app.get("/api/orders/:userId", (req, res) => {
     });
   });
 });
+
 /* ADMIN: GET ALL ORDERS */
 app.get("/api/admin/orders", (req, res) => {
   const sql = `
@@ -584,7 +594,6 @@ app.get("/api/admin/orders", (req, res) => {
   });
 });
 
-
 /* ADMIN: UPDATE ORDER STATUS */
 app.patch("/api/admin/orders/:orderId/status", (req, res) => {
   const { orderId } = req.params;
@@ -606,41 +615,40 @@ app.patch("/api/admin/orders/:orderId/status", (req, res) => {
     });
   }
 
-  const sql = `
-    UPDATE orders 
-    SET status = ? 
-    WHERE id = ?
-  `;
+  db.query(
+    "UPDATE orders SET status = ? WHERE id = ?",
+    [status, orderId],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          error: err.message
+        });
+      }
 
-  db.query(sql, [status, orderId], (err, result) => {
-    if (err) {
-      return res.status(500).json({
-        success: false,
-        error: err.message
+      if (result.affectedRows === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Order not found"
+        });
+      }
+
+      res.json({
+        success: true,
+        message: "Order status updated successfully"
       });
     }
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Order not found"
-      });
-    }
-
-    res.json({
-      success: true,
-      message: "Order status updated successfully"
-    });
-  });
+  );
 });
+
 /* ADMIN: SALES ANALYTICS */
 app.get("/api/admin/analytics", (req, res) => {
   const analyticsSql = `
     SELECT 
       COUNT(*) AS total_orders,
-      SUM(total_amount) AS total_revenue,
+      COALESCE(SUM(total_amount), 0) AS total_revenue,
       SUM(CASE WHEN DATE(created_at) = CURDATE() THEN 1 ELSE 0 END) AS today_orders,
-      SUM(CASE WHEN DATE(created_at) = CURDATE() THEN total_amount ELSE 0 END) AS today_revenue,
+      COALESCE(SUM(CASE WHEN DATE(created_at) = CURDATE() THEN total_amount ELSE 0 END), 0) AS today_revenue,
       SUM(CASE WHEN status = 'PENDING' THEN 1 ELSE 0 END) AS pending_orders,
       SUM(CASE WHEN status = 'DELIVERED' THEN 1 ELSE 0 END) AS delivered_orders,
       SUM(CASE WHEN status = 'CANCELLED' THEN 1 ELSE 0 END) AS cancelled_orders
@@ -682,6 +690,7 @@ app.get("/api/admin/analytics", (req, res) => {
     });
   });
 });
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
